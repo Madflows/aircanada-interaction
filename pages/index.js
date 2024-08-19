@@ -1,3 +1,5 @@
+// Consider following @madflows_ on Twitter.
+
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
@@ -19,8 +21,9 @@ const EVENTS_DATA = [
 ];
 
 const container = {
-  hidden: { },
+  hidden: { opacity: 0 },
   show: {
+    opacity: 1,
     transition: {
       delayChildren: 1.5,
       staggerChildren: 2.4,
@@ -31,6 +34,10 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 50 },
   show: { opacity: 1, y: 0 },
+};
+const barsHorizontal = {
+  hidden: { opacity: 0, x: 50 },
+  show: { opacity: 1, x: 0 },
 };
 
 export default function Home() {
@@ -44,8 +51,7 @@ export default function Home() {
       >
         <div className='flex items-start justify-between'>
           <div className='pt-2'>
-
-          <img src='/plane.png' alt='place' />
+            <img src='/plane.png' alt='place' />
           </div>
           <div className='flex flex-col items-end gap-4'>
             <img
@@ -57,8 +63,8 @@ export default function Home() {
             <div className='flex flex-col text-right'>
               <h2 className='font-semibold'>AC287 &bull; Gate E7</h2>
               <p className='text-gray-800'>Toronto -&gt; Paris</p>
-              <p className='text-xs text-zinc-400 font-medium'>
-                <span className='text-green-400 text-lg'>&bull;</span> On time
+              <p className='text-xs text-zinc-400 font-medium flex items-center gap-1 justify-end'>
+                <span className='text-green-400 text-xl'>&bull;</span> On time
               </p>
             </div>
           </div>
@@ -70,12 +76,17 @@ export default function Home() {
           tabIndex={0}
           transition={{
             ease: 'easeOut',
-            duration: 0.3,
+            // type: 'spring',
+            // stiffness: 70,
+            duration: 0.35,
           }}
           style={{ borderRadius: 20 }}
-          className={cn('bg-zinc-900 p-4 overflow-hidden flex flex-col gap-4', {
-            'absolute inset-4 z-10': open,
-          })}
+          className={cn(
+            'bg-zinc-900 origin-bottom p-4 overflow-clip max-w-full flex flex-col gap-4',
+            {
+              'absolute inset-4 z-10': open,
+            }
+          )}
         >
           <motion.div layout className='flex items-center justify-between'>
             <p className='text-zinc-400 text-sm'>
@@ -84,15 +95,31 @@ export default function Home() {
             </p>
             <p className='text-white text-sm'>Gate closes at 9:15PM</p>
           </motion.div>
-          <motion.div initial='hidden' className='mt-auto' animate='show'>
+          <motion.div
+            initial='hidden'
+            className='mt-auto'
+            animate='show'
+            exit='hidden'
+          >
             <AnimatePresence>
               {!open ? (
                 <motion.div
+                  // variants={barsHorizontal}
                   layout='preserve-aspect'
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
                   transition={{
                     ease: 'easeOut',
+                    // type: 'spring',
+                    // stiffness: 70,
+                    // delay: 0.5,
+                    duration: 0.2,
                   }}
-                  className='flex justify-end gap-1'
+                  className='flex justify-end gap-1 opacity-0'
                 >
                   <div className='flex flex-col gap-1'>
                     <div className='flex gap-1'>
@@ -110,9 +137,10 @@ export default function Home() {
                                 transition={{
                                   repeat: Infinity,
                                   duration: 0.9,
-                                  ease: 'easeOut',
+                                  type: 'spring',
+                                  stiffness: 70,
                                   repeatType: 'mirror',
-                                  repeatDelay: 2.5,
+                                  repeatDelay: 0.5,
                                 }}
                                 className='absolute inset-0 bg-red-500 rounded-md translate-y-5 origin-bottom'
                               ></motion.div>
@@ -143,9 +171,23 @@ export default function Home() {
                         return (
                           <div
                             key={i}
-                            className='h-7 w-1.5 bg-red-500 rounded-md relative'
+                            className='h-7 w-1.5 bg-red-500 rounded-md relative cursor-pointer'
                           >
-                            <span className='absolute inset-0 bg-red-500 animate-ping ease-out rounded-lg' />
+                            <motion.span
+                              animate={{
+                                scaleY: [1, 1.5],
+                                scaleX: [0.5, 2.1],
+                                opacity: [1, 0],
+                              }}
+                              transition={{
+                                ease: 'easeOut',
+                                duration: 0.5,
+                                repeat: Infinity,
+                                // repeatType: 'mirror',
+                                repeatDelay: 0.5,
+                              }}
+                              className='absolute inset-0 bg-red-500 rounded-lg'
+                            />
                           </div>
                         );
                       })}
@@ -170,11 +212,15 @@ export default function Home() {
                       key={event.title}
                       transition={{
                         ease: 'easeOut',
+                        // type: 'spring',
+                        // stiffness: 50,
+
+                        duration: 0.35,
                         delay: 0.1 * (i + 1),
                       }}
                       className='flex items-center justify-between'
                     >
-                      <div className='flex items-center gap-3'>
+                      <div className='flex items-center gap-2'>
                         <div
                           className={cn('w-2.5 h-7 rounded-md bg-zinc-600', {
                             'bg-red-500': event.active,
@@ -189,7 +235,7 @@ export default function Home() {
                         </p>
                       </div>
                       <p
-                        className={cn('text-base text-zinc-500', {
+                        className={cn('text-base text-zinc-500 font-mono', {
                           'text-white font-medium': event.active,
                         })}
                       >
@@ -200,6 +246,11 @@ export default function Home() {
                 </motion.div>
               )}
             </AnimatePresence>
+            {/* <AnimatePresence>
+              {open && (
+                
+              )}
+            </AnimatePresence> */}
           </motion.div>
         </motion.div>
       </div>
